@@ -187,7 +187,7 @@ def train():
         # get ctc parameters
         input_lengths, target_lengths = sparse_tuple_for_ctc(T_length, lengths)
         # update lr
-        lr = .001 #adjust_learning_rate(optimizer, epoch, args.learning_rate, args.lr_schedule)
+        lr = adjust_learning_rate(optimizer, epoch, args.learning_rate, args.lr_schedule)
 
         if args.cuda:
             images = Variable(images, requires_grad=False).cuda()
@@ -228,9 +228,9 @@ def Greedy_Decode_Eval(Net, datasets, args):
     epoch_size = len(datasets) // args.test_batch_size
     batch_iterator = iter(DataLoader(datasets, args.test_batch_size, shuffle=True, num_workers=args.num_workers, collate_fn=collate_fn))
 
-    Tp = 0.01
-    Tn_1 = 0.01
-    Tn_2 = 0.01
+    Tp = 0
+    Tn_1 = 0
+    Tn_2 = 0
     t1 = time.time()
     for i in range(epoch_size):
         # load train data
