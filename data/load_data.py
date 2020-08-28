@@ -9,7 +9,7 @@ CHARS = [
          '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
          'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'J', 'K',
          'L', 'M', 'N', 'P', 'Q', 'R', 'S', 'T', 'U', 'V',
-         'W', 'X', 'Y', 'Z', 'I', 'O', '-'
+         'W', 'X', 'Y', 'Z', 'I', 'O', '-','.',',',' ','~'
          ]
 
 CHARS_DICT = {char:i for i, char in enumerate(CHARS)}
@@ -20,6 +20,7 @@ class LPRDataLoader(Dataset):
         self.img_paths = []
         for i in range(len(img_dir)):
             self.img_paths += [el for el in paths.list_images(img_dir[i])]
+        print("1dir found, size: ",len(self.img_paths))
         random.shuffle(self.img_paths)
         self.img_size = imgSize
         self.lpr_max_len = lpr_max_len
@@ -33,28 +34,33 @@ class LPRDataLoader(Dataset):
 
     def __getitem__(self, index):
         filename = self.img_paths[index]
-        Image = cv2.imread(filename)
-        height, width, _ = Image.shape
-        if height != self.img_size[1] or width != self.img_size[0]:
-            Image = cv2.resize(Image, self.img_size)
-        Image = self.PreprocFun(Image)
+        try:
+            Image = cv2.imread(filename)
+            height, width, _ = Image.shape
+            if height != self.img_size[1] or width != self.img_size[0]:
+                Image = cv2.resize(Image, self.img_size)
+            Image = self.PreprocFun(Image)
+            basename = os.path.basename(filename)
+            imgname, suffix = os.path.splitext(basename)
+            imgname = imgname.split("-")[0].split("_")[0]
+            label = list()
+            for c in imgname:
+                c = c.upper()
+                # one_hot_base = np.zeros(len(CHARS))
+                # one_hot_base[CHARS_DICT[c]] = 1
+                label.append(CHARS_DICT[c])
 
-        basename = os.path.basename(filename)
-        imgname, suffix = os.path.splitext(basename)
-        imgname = imgname.split("-")[0].split("_")[0]
-        label = list()
-        for c in imgname:
-            # one_hot_base = np.zeros(len(CHARS))
-            # one_hot_base[CHARS_DICT[c]] = 1
-            label.append(CHARS_DICT[c])
+            if len(label) == 8:
+                if self.check(label) == False:
+                    print(imgname)
+                    assert 0, "Error label ^~^!!!"
 
-        if len(label) == 8:
-            if self.check(label) == False:
-                print(imgname)
-                assert 0, "Error label ^~^!!!"
-
-        return Image, label, len(label)
-
+            return Image, label, len(label)
+        except:
+            print("Error in image: ",filename)
+            print("Deleting img..")
+            os.remove(filename)
+    
     def transform(self, img):
         img = img.astype('float32')
         img -= 127.5
@@ -64,8 +70,7 @@ class LPRDataLoader(Dataset):
         return img
 
     def check(self, label):
-        if label[2] != CHARS_DICT['D'] and label[2] != CHARS_DICT['F'] \
-                and label[-1] != CHARS_DICT['D'] and label[-1] != CHARS_DICT['F']:
+        if len(label)<4:
             print("Error label, Please check!")
             return False
         else:

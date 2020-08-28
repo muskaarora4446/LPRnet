@@ -19,6 +19,7 @@ class small_basic_block(nn.Module):
 class LPRNet(nn.Module):
     def __init__(self, lpr_max_len, phase, class_num, dropout_rate):
         super(LPRNet, self).__init__()
+        torch.cuda.empty_cache()
         self.phase = phase
         self.lpr_max_len = lpr_max_len
         self.class_num = class_num

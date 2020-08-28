@@ -8,6 +8,7 @@ Author: aiboy.wei@outlook.com .
 
 from data.load_data import CHARS, CHARS_DICT, LPRDataLoader
 from model.LPRNet import build_lprnet
+from PIL import Image
 # import torch.backends.cudnn as cudnn
 from torch.autograd import Variable
 import torch.nn.functional as F
@@ -50,8 +51,8 @@ def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
     parser.add_argument('--max_epoch', default=15, help='epoch to train the network')
     parser.add_argument('--img_size', default=[94, 24], help='the image size')
-    parser.add_argument('--train_img_dirs', default="~/images/train", help='the train images path')
-    parser.add_argument('--test_img_dirs', default="~/images/test", help='the test images path')
+    parser.add_argument('--train_img_dirs', default="D:/Courses/Projects/ANPR/images/train", help='the train images path')
+    parser.add_argument('--test_img_dirs', default="D:/Courses/Projects/ANPR/images/test", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
     parser.add_argument('--learning_rate', default=0.1, help='base value of learning rate.')
     parser.add_argument('--lpr_max_len', default=16, help='license plate number max length.')
@@ -89,13 +90,12 @@ def collate_fn(batch):
 
 def get_size(imgpath):
     shapeslist=[]
-    for dirs in os.listdir(imgpath):
-        for i,img in enumerate(os.listdir(imgpath+"/"+dirs)):
-            try:
-                im = Image.open(imgpath+"/"+dirs+"/"+img)
-                shapeslist.append(im.size)
-            except:
-                pass
+    for img in os.listdir(imgpath):
+        try:
+            im = Image.open(imgpath+"/"+img)
+            shapeslist.append(im.size)
+        except:
+            pass
     a = np.array(shapeslist)
     heights = a.T[0]
     widths = a.T[1]
@@ -149,6 +149,7 @@ def train():
                          momentum=args.momentum, weight_decay=args.weight_decay)
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
+    #print("train:", train_img_dirs)
     train_imgsize = get_size(train_img_dirs)
     test_imgsize = get_size(test_img_dirs)
     train_dataset = LPRDataLoader(train_img_dirs.split(','), train_imgsize, args.lpr_max_len)
