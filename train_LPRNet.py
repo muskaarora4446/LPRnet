@@ -87,15 +87,15 @@ def collate_fn(batch):
 
     return (torch.stack(imgs, 0), torch.from_numpy(labels), lengths)
 
-def get_size(train_img_dirs):
+def get_size(imgpath):
     shapeslist=[]
     for dirs in os.listdir(imgpath):
-    for i,img in enumerate(os.listdir(imgpath+"/"+dirs)):
-        try:
-            im = Image.open(imgpath+"/"+dirs+"/"+img)
-            shapeslist.append(im.size)
-        except:
-            pass
+        for i,img in enumerate(os.listdir(imgpath+"/"+dirs)):
+            try:
+                im = Image.open(imgpath+"/"+dirs+"/"+img)
+                shapeslist.append(im.size)
+            except:
+                pass
     a = np.array(shapeslist)
     heights = a.T[0]
     widths = a.T[1]
@@ -149,9 +149,10 @@ def train():
                          momentum=args.momentum, weight_decay=args.weight_decay)
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
-    imgsize = get_size(train_img_dirs)
-    train_dataset = LPRDataLoader(train_img_dirs.split(','), imgsize, args.lpr_max_len)
-    test_dataset = LPRDataLoader(test_img_dirs.split(','), imgsize, args.lpr_max_len)
+    train_imgsize = get_size(train_img_dirs)
+    test_imgsize = get_size(test_img_dirs)
+    train_dataset = LPRDataLoader(train_img_dirs.split(','), train_imgsize, args.lpr_max_len)
+    test_dataset = LPRDataLoader(test_img_dirs.split(','), test_imgsize, args.lpr_max_len)
 
     epoch_size = len(train_dataset) // args.train_batch_size
     max_iter = args.max_epoch * epoch_size
