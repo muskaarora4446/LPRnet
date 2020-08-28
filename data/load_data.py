@@ -37,20 +37,16 @@ class LPRDataLoader(Dataset):
         try:
             Image = cv2.imread(filename)
             height, width, _ = Image.shape
-            if height != self.img_size[1] or width != self.img_size[0]:
-                Image = cv2.resize(Image, self.img_size)
+            Image = cv2.resize(Image, self.img_size)
             Image = self.PreprocFun(Image)
             basename = os.path.basename(filename)
             imgname, suffix = os.path.splitext(basename)
-            imgname = imgname.split("-")[0].split("_")[0]
             label = list()
             for c in imgname:
                 c = c.upper()
                 # one_hot_base = np.zeros(len(CHARS))
                 # one_hot_base[CHARS_DICT[c]] = 1
                 label.append(CHARS_DICT[c])
-
-            
             if self.check(label) == False:
                 print(imgname)
                 assert 0, "Error label ^~^!!!"
@@ -58,8 +54,8 @@ class LPRDataLoader(Dataset):
             return Image, label, len(label)
         except:
             print("Error in image: ",filename)
-            print("Deleting img..")
-            os.remove(filename)
+            #os.remove(filename)
+            print("deleting: ")
     
     def transform(self, img):
         img = img.astype('float32')
@@ -68,10 +64,10 @@ class LPRDataLoader(Dataset):
         img = np.transpose(img, (2, 0, 1))
 
         return img
-
     def check(self, label):
         if len(label)<4:
             print("Error label, Please check!")
             return False
         else:
             return True
+

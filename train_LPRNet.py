@@ -50,7 +50,7 @@ def adjust_learning_rate(optimizer, cur_epoch, base_lr, lr_schedule):
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters to train net')
     parser.add_argument('--max_epoch', default=15, help='epoch to train the network')
-    parser.add_argument('--img_size', default=[94, 24], help='the image size')
+    parser.add_argument('--img_size', default=(94, 24), help='the image size')
     parser.add_argument('--train_img_dirs', default="~/images/train", help='the train images path')
     parser.add_argument('--test_img_dirs', default="~/images/test", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
@@ -103,7 +103,7 @@ def get_size(imgpath):
     widths.sort()
     img_h = int(np.median(heights))
     img_w = int(np.median(widths))
-    return([img_h,img_w])
+    return((img_h,img_w))
 
 def train():
     args = get_parser()
@@ -150,10 +150,10 @@ def train():
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
     #print("train:", train_img_dirs)
-    train_imgsize = get_size(train_img_dirs)
-    test_imgsize = get_size(test_img_dirs)
-    train_dataset = LPRDataLoader(train_img_dirs.split(','), train_imgsize, args.lpr_max_len)
-    test_dataset = LPRDataLoader(test_img_dirs.split(','), test_imgsize, args.lpr_max_len)
+    #train_imgsize = get_size(train_img_dirs)
+    #test_imgsize = get_size(test_img_dirs)
+    train_dataset = LPRDataLoader(train_img_dirs.split(','), args.img_size, args.lpr_max_len)
+    test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len)
 
     epoch_size = len(train_dataset) // args.train_batch_size
     max_iter = args.max_epoch * epoch_size
