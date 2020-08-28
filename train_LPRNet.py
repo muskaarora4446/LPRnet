@@ -54,7 +54,7 @@ def get_parser():
     parser.add_argument('--test_img_dirs', default="~/images/test", help='the test images path')
     parser.add_argument('--dropout_rate', default=0.5, help='dropout rate.')
     parser.add_argument('--learning_rate', default=0.1, help='base value of learning rate.')
-    parser.add_argument('--lpr_max_len', default=8, help='license plate number max length.')
+    parser.add_argument('--lpr_max_len', default=16, help='license plate number max length.')
     parser.add_argument('--train_batch_size', default=128, help='training batch size.')
     parser.add_argument('--test_batch_size', default=120, help='testing batch size.')
     parser.add_argument('--phase_train', default=True, type=bool, help='train or test phase flag.')
@@ -86,6 +86,24 @@ def collate_fn(batch):
     labels = np.asarray(labels).flatten().astype(np.int)
 
     return (torch.stack(imgs, 0), torch.from_numpy(labels), lengths)
+
+def get_size(train_img_dirs):
+    shapeslist=[]
+    for dirs in os.listdir(imgpath):
+    for i,img in enumerate(os.listdir(imgpath+"/"+dirs)):
+        try:
+            im = Image.open(imgpath+"/"+dirs+"/"+img)
+            shapeslist.append(im.size)
+        except:
+            pass
+    a = np.array(shapeslist)
+    heights = a.T[0]
+    widths = a.T[1]
+    heights.sort()
+    widths.sort()
+    img_h = int(np.median(heights))
+    img_w = int(np.median(widths))
+    return([img_h,img_w])
 
 def train():
     args = get_parser()
@@ -131,8 +149,9 @@ def train():
                          momentum=args.momentum, weight_decay=args.weight_decay)
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
-    train_dataset = LPRDataLoader(train_img_dirs.split(','), args.img_size, args.lpr_max_len)
-    test_dataset = LPRDataLoader(test_img_dirs.split(','), args.img_size, args.lpr_max_len)
+    imgsize = get_size(train_img_dirs)
+    train_dataset = LPRDataLoader(train_img_dirs.split(','), imgsize, args.lpr_max_len)
+    test_dataset = LPRDataLoader(test_img_dirs.split(','), imgsize, args.lpr_max_len)
 
     epoch_size = len(train_dataset) // args.train_batch_size
     max_iter = args.max_epoch * epoch_size
