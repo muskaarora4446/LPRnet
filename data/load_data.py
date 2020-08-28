@@ -60,11 +60,14 @@ class LPRDataLoader(Dataset):
     
     def transform(self, img):
         img = img.astype('float32')
+        img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img -= 127.5
         img *= 0.0078125
+        thresh, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY)
+        img = np.reshape(img, img.shape + (1,))
         img = np.transpose(img, (2, 0, 1))
-
         return img
+
     def check(self, label):
         if len(label)<4:
             print("Error label, Please check!")
