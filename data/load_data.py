@@ -54,8 +54,9 @@ class LPRDataLoader(Dataset):
             return Image, label, len(label)
         except:
             print("Error in image: ",filename)
-            #os.remove(filename)
             print("deleting: ")
+            #os.remove(filename)
+            
     
     def transform(self, img):
         img = img.astype('float32')
