@@ -12,11 +12,11 @@ Indian Number Plate Recognition Modification.
 - Pillow
 - numpy
 
-## coming up
+## Coming up
 
-1. dataset preprocessor for csv labels
+1. Dataset preprocessor for csv labels
 
-## training and testing
+## Training and Testing
 
 1. Uncomment get_size function calls in train() to train with median size of dataset, default size is 94*24
 2. Based on your dataset path modify the script and its hyperparameters.
