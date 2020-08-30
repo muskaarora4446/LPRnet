@@ -1,3 +1,9 @@
+Cmd to begin training:
+
+	python train_LPRNet.py
+	 
+	 
+
 ## LPRNet Pytorch
 Pytorch Implementation For LPRNet, A High Performance And Lightweight License Plate Recognition Framework.(Chinese Number Plates Recognition)
 
