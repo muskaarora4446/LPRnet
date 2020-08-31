@@ -24,9 +24,9 @@ Indian Number Plate Recognition Modification.
 3. Input folder to contain 2 items, a folder containing all images and a csv/excel file of labels.
 4. Csv should look like:
 
-| Img name | label |
+| img name | Label |
 | :----: | :----: |
-| xyz.png  | KA 00 XX 0000|
+| xyz.png  | KA 00 XX 0000 |
 
 
 
