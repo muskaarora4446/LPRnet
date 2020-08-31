@@ -19,14 +19,14 @@ Indian Number Plate Recognition Modification.
 
 ## Dataset preprocessing
 
--Image name should be its label and separated into test and train.
-Otherwise:
-- Run preprocessor.py and pass input folder, required format:
-1. Input folder to contain 2 items, a folder containing all images and a csv/excel file of labels.
-2. Csv should look like:
+1. Image name should be its label and separated into test and train. Otherwise:
+2. Run preprocessor.py and pass input folder, required format:
+3. Input folder to contain 2 items, a folder containing all images and a csv/excel file of labels.
+4. Csv should look like:
+
 | Img name | label |
 | :----: | :----: |
-|         xyz.png        | KA 00 XX 0000|
+| xyz.png  | KA 00 XX 0000|
 
 
 
