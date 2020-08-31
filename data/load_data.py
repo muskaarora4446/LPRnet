@@ -42,6 +42,7 @@ class LPRDataLoader(Dataset):
             Image = self.PreprocFun(Image)
             basename = os.path.basename(filename)
             imgname, suffix = os.path.splitext(basename)
+            imgname = imgname.strip("_")
             label = list()
             for c in imgname:
                 c = c.upper()
@@ -64,7 +65,7 @@ class LPRDataLoader(Dataset):
         img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
         img -= 127.5
         img *= 0.0078125
-        thresh, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY)
+        #thresh, img = cv2.threshold(img, 0, 255, cv2.THRESH_BINARY)
         img = np.reshape(img, img.shape + (1,))
         img = np.transpose(img, (2, 0, 1))
         return img
