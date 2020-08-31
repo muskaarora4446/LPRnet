@@ -1,9 +1,3 @@
-Cmd to begin training:
-
-	python train_LPRNet.py
-	 
-	 
-
 ## LPRNet Pytorch
 Pytorch Implementation For LPRNet, A High Performance And Lightweight License Plate Recognition Framework.(Chinese Number Plates Recognition)
 
@@ -18,19 +12,33 @@ Indian Number Plate Recognition Modification.
 - Pillow
 - numpy
 
-## Coming up
+## Tasks
 
-1. Dataset preprocessor for csv labels
+- [x] Dataset preprocessor for csv label format. 
+- [ ] Tune hyperparameters.
+
+## Dataset preprocessing
+
+-Image name should be its label and separated into test and train.
+Otherwise:
+- Run preprocessor.py and pass input folder, required format:
+1. Input folder to contain 2 items, a folder containing all images and a csv/excel file of labels.
+2. Csv should look like:
+| Img name | label |
+| :----: | :----: |
+|         xyz.png        | KA 00 XX 0000|
+
+
 
 ## Training and Testing
 
-1. Uncomment get_size function calls in train() to train with median size of dataset, default size is 94*24
+1. Uncomment get_size function calls in train() to train with median size of dataset, default size is 94,24 edit:model only works for 94,24 size
 2. Based on your dataset path modify the script and its hyperparameters.
 3. Adjust other hyperparameters if needed.
 4. Run 'python train_LPRNet.py' or 'python test_LPRNet.py'.
 5. If want to show testing result, add '--show true' or '--show 1' to run command.
 
-## Performance
+## Performance 
 
 - Personal test datasets of chinese plates.
 - Include blue/green license plate.
