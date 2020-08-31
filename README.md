@@ -32,7 +32,7 @@ Indian Number Plate Recognition Modification.
 
 ## Training and Testing
 
-1. Uncomment get_size function calls in train() to train with median size of dataset, default size is 94,24 edit:model only works for 94,24 size
+1. Uncomment get_size function calls in train() to train with median size of dataset, default size is 94,24. Edit: Model only works for 94,24 size right now.
 2. Based on your dataset path modify the script and its hyperparameters.
 3. Adjust other hyperparameters if needed.
 4. Run 'python train_LPRNet.py' or 'python test_LPRNet.py'.
