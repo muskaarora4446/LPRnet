@@ -41,7 +41,7 @@ class LPRDataLoader(Dataset):
             Image = self.PreprocFun(Image)
             basename = os.path.basename(filename)
             imgname, suffix = os.path.splitext(basename)
-            imgname = imgname.strip('_')
+            imgname = ''.join(e for e in imgname if e.isalnum())
             label = list()
             for c in imgname:
                 c = c.upper()
