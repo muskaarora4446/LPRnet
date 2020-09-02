@@ -63,6 +63,7 @@ def preprocess():
         for img in os.listdir(os.path.join(odr+dirs)):
             ipath = os.path.join(odr,dirs,img)
             label = df[df.iloc[:,0]==img].iloc[0,1]
+            label = ''.join(e for e in label if e.isalnum())
             tpath = os.path.join(odr,dirs,modify(os.path.join(odr+dirs),label)+".png")
             if img not in df.iloc[:,0].tolist() or len(label)<4:
                 print(f"Label not found Error: Discarding image:{img}")
