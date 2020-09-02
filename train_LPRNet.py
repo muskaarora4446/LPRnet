@@ -149,7 +149,6 @@ def train():
                          momentum=args.momentum, weight_decay=args.weight_decay)
     train_img_dirs = os.path.expanduser(args.train_img_dirs)
     test_img_dirs = os.path.expanduser(args.test_img_dirs)
-    #print("train:", train_img_dirs)
     #train_imgsize = get_size(train_img_dirs)
     #test_imgsize = get_size(test_img_dirs)
     train_dataset = LPRDataLoader(train_img_dirs.split(','), args.img_size, args.lpr_max_len)
@@ -183,7 +182,6 @@ def train():
         # load train data
         images, labels, lengths = next(batch_iterator)
         # labels = np.array([el.numpy() for el in labels]).T
-        # print(labels)
         # get ctc parameters
         input_lengths, target_lengths = sparse_tuple_for_ctc(T_length, lengths)
         # update lr
@@ -199,10 +197,8 @@ def train():
         # forward
         logits = lprnet(images)
         log_probs = logits.permute(2, 0, 1) # for ctc loss: T x N x C
-        # print(labels.shape)
         log_probs = log_probs.log_softmax(2).requires_grad_()
         # log_probs = log_probs.detach().requires_grad_()
-        # print(log_probs.shape)
         # backprop
         optimizer.zero_grad()
         loss = ctc_loss(log_probs, labels, input_lengths=input_lengths, target_lengths=target_lengths)
