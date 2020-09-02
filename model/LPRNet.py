@@ -80,7 +80,7 @@ class LPRNet(nn.Module):
 
         return logits
 
-def build_lprnet(lpr_max_len=15, phase=False, class_num=42, dropout_rate=0.5):
+def build_lprnet(lpr_max_len=15, phase=False, class_num=36, dropout_rate=0.5):
 
     Net = LPRNet(lpr_max_len, phase, class_num, dropout_rate)
 
