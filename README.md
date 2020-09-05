@@ -39,18 +39,8 @@ Indian Number Plate Recognition Modification.
 4. Run 'python train_LPRNet.py' or 'python test_LPRNet.py'.
 5. If want to show testing result, add '--show true' or '--show 1' to run command.
 
-### Performance 
-
-- Personal test datasets of chinese plates.
-- Include blue/green license plate.
-- Total test images number is 27320.
-
-|  size  | personal test imgs(%) | inference@gtx 1060(ms) |
-| ------ | --------------------- | ---------------------- |
-|  1.7M  |         96.0+         |          0.5-          |
 
 ### References
 
 1. [LPRNet: License Plate Recognition via Deep Neural Networks](https://arxiv.org/abs/1806.10447v1)
 2. [PyTorch中文文档](https://pytorch-cn.readthedocs.io/zh/latest/)
-3. [Original repository](https://github.com/sirius-ai/LPRNet_Pytorch)
