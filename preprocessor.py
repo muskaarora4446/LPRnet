@@ -12,14 +12,14 @@ import argparse
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters for dataset preprocessing')
-    parser.add_argument('--input_dir', default="./Input", help='Input path (contains imgfolder and label csv)')
+    parser.add_argument('--input_dir', default="./Input/", help='Input path (contains imgfolder and label csv)')
     parser.add_argument('--output_dir', default="./images/", help='a folder containing train and test folders will be created here') #don't pass for easy training
     args = parser.parse_args()
     return args
 
-def modify(root,label):
-    if os.path.exists(os.path.join(root,label+".png")):
-        label = modify(root,label+'_')
+def modify(root,label,ext):
+    if os.path.exists(os.path.join(root,label+ext)):
+        label = modify(root,label+'_',ext)
     return label
 
 def preprocess():
@@ -42,7 +42,7 @@ def preprocess():
         df = pd.read_excel(dfpath)
     else:
         df = pd.read_csv(dfpath,encoding = "ISO-8859-1")
-
+    df = df.astype(str)
     allFileNames = os.listdir(imgfolder)
     np.random.shuffle(allFileNames)
     train_FileNames, test_FileNames = np.split(np.array(allFileNames),
@@ -58,19 +58,23 @@ def preprocess():
         shutil.copy(name, odr+"/train")
     for name in test_FileNames:
         shutil.copy(name, odr+"/test")
-    
+    count=0
     for dirs in os.listdir(odr):
         for img in os.listdir(os.path.join(odr+dirs)):
             ipath = os.path.join(odr,dirs,img)
+            #img,_ = os.path.splitext(img) #uncomment this line if your dataset has imgname without label, if so, modify to accomodate imgname of type(int)
+            _,ext = os.path.splitext(ipath)
             label = df[df.iloc[:,0]==img].iloc[0,1]
             label = ''.join(e for e in label if e.isalnum())
-            tpath = os.path.join(odr,dirs,modify(os.path.join(odr+dirs),label)+".png")
+            tpath = os.path.join(odr,dirs,modify(os.path.join(odr+dirs),label,ext)+ext)
             if img not in df.iloc[:,0].tolist() or len(label)<4:
+                count+=1
                 print(f"Label not found Error: Discarding image:{img}")
                 os.remove(ipath)
                 continue
 
             os.rename(ipath,tpath)
+    print(f"Discarded {count} images in total.")
             
 
 if __name__ == "__main__":
