@@ -15,6 +15,7 @@ Indian Number Plate Recognition Modification.
 ### Tasks
 
 - [x] Dataset preprocessor for csv label format. 
+- [x] Added robustness to preprocessor. 
 - [ ] Tune hyperparameters.
 
 ### Dataset preprocessing
