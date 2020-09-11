@@ -9,18 +9,42 @@ import numpy as np
 import cv2 as cv
 from PIL import Image
 import argparse
+import re
 
 def get_parser():
     parser = argparse.ArgumentParser(description='parameters for dataset preprocessing')
-    parser.add_argument('--input_dir', default="./Input/", help='Input path (contains imgfolder and label csv)')
+    parser.add_argument('--input_dir', default="./IMAGES3/", help='Input path (contains imgfolder and label csv)')
     parser.add_argument('--output_dir', default="./images/", help='a folder containing train and test folders will be created here') #don't pass for easy training
     args = parser.parse_args()
     return args
 
-def modify(root,label,ext):
-    if os.path.exists(os.path.join(root,label+ext)):
-        label = modify(root,label+'_',ext)
-    return label
+def label_check(label):
+    if len(label)< 8:
+        return 0
+
+    if label[0:2]=='DL':
+        delhi_pt = "\d{4,4}$"
+        dlval = re.search(delhi_pt,label)
+        if dlval is None or len(dlval.group())<8:
+            return 0
+        else:
+            return 1
+    pattern = "(([A-Za-z]){2,3}(|-)(?:[0-9]){1,2}(|-)(?:[A-Za-z]){2}(|-)([0-9]){1,4})|(([A-Za-z]){2,3}(|-)([0-9]){1,4})"
+    val = re.search(pattern,label)
+    if val is None or len(val.group())<8:
+        return 0
+    else:
+        return 1
+
+def size_check(ipath):
+    img = cv.imread(ipath)
+    height = img.shape[0]
+    width = img.shape[1]
+    #print(height,width)
+    if height<24 or width<90:
+        return 0
+    return 1
+
 
 def preprocess():
     args = get_parser()
@@ -62,15 +86,24 @@ def preprocess():
     for dirs in os.listdir(odr):
         for img in os.listdir(os.path.join(odr+dirs)):
             ipath = os.path.join(odr,dirs,img)
-            #img,_ = os.path.splitext(img) #uncomment this line if your dataset has imgname without label, if so, modify to accomodate imgname of type(int)
+            img,_ = os.path.splitext(img) #uncomment this line if your dataset has imgname without label and modify to accomodate imgname of type(int)
             _,ext = os.path.splitext(ipath)
             label = df[df.iloc[:,0]==img].iloc[0,1]
             label = ''.join(e for e in label if e.isalnum())
-            tpath = os.path.join(odr,dirs,modify(os.path.join(odr+dirs),label,ext)+ext)
-            if img not in df.iloc[:,0].tolist() or len(label)<4:
+            if img not in df.iloc[:,0].tolist() or label_check(label)==0 or size_check(ipath)==0:
                 count+=1
-                print(f"Label not found Error: Discarding image:{img}")
+                print(f"Image not found/ Image too small Label error: Discarding image:{img}")
                 os.remove(ipath)
+                continue
+            tpath = os.path.join(odr,dirs,label+ext)
+            if os.path.exists(tpath):
+                if os.path.getsize(tpath)>os.path.getsize(ipath):
+                    os.remove(ipath)
+                else :
+                    os.remove(tpath)
+                    os.rename(ipath,tpath)
+                count+=1
+                print(f"Discarding duplicate image:{img}")
                 continue
 
             os.rename(ipath,tpath)
@@ -79,3 +112,8 @@ def preprocess():
 
 if __name__ == "__main__":
     preprocess()
+
+
+
+
+
